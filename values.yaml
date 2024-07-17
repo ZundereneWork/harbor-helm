@@ -28,7 +28,7 @@ expose:
       secretName: ""
   ingress:
     hosts:
-      core: core.harbor.domain
+      core: harbor.thelmalouise.ddns.net
     # set to the type of ingress controller if it has specific requirements.
     # leave as `default` for most ingress controllers.
     # set to `gce` if using the GCE ingress controller
@@ -43,9 +43,11 @@ expose:
       # note different ingress controllers may require a different ssl-redirect annotation
       # for Envoy, use ingress.kubernetes.io/force-ssl-redirect: "true" and remove the nginx lines below
       ingress.kubernetes.io/ssl-redirect: "true"
-      ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      ingress.kubernetes.io/proxy-body-size: "0"
+
     harbor:
       # harbor ingress-specific annotations
       annotations: {}
@@ -103,7 +105,7 @@ expose:
 # the IP address of k8s node
 #
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
-externalURL: https://core.harbor.domain
+externalURL: https://harbor.thelmalouise.ddns.net
 
 # The internal TLS used for harbor components secure communicating. In order to enable https
 # in each component tls cert files need to provided in advance.
@@ -190,15 +192,15 @@ persistence:
       # Specify the "storageClass" used to provision the volume. Or the default
       # StorageClass will be used (the default).
       # Set it to "-" to disable dynamic provisioning
-      storageClass: ""
+      storageClass: "microk8s-hostpath"
       subPath: ""
       accessMode: ReadWriteOnce
-      size: 5Gi
+      size: 50Gi
       annotations: {}
     jobservice:
       jobLog:
         existingClaim: ""
-        storageClass: ""
+        storageClass: "microk8s-hostpath"
         subPath: ""
         accessMode: ReadWriteOnce
         size: 1Gi
@@ -207,7 +209,7 @@ persistence:
     # be ignored
     database:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "microk8s-hostpath"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
@@ -216,14 +218,14 @@ persistence:
     # be ignored
     redis:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "microk8s-hostpath"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
       annotations: {}
     trivy:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "microk8s-hostpath"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
@@ -748,7 +750,7 @@ trivy:
 database:
   # if external database is used, set "type" to "external"
   # and fill the connection information in "external" section
-  type: internal
+  type: external
   internal:
     # set the service account to be used, default if left empty
     serviceAccountName: ""
@@ -758,7 +760,7 @@ database:
       repository: goharbor/harbor-db
       tag: dev
     # The initial superuser password for internal database
-    password: "changeit"
+    password: "example"
     # The size limit for Shared memory, pgSQL use it for shared_buffer
     # More details see:
     # https://github.com/goharbor/harbor/issues/15034
@@ -791,10 +793,10 @@ database:
       #    memory: 128Mi
       #    cpu: 100m
   external:
-    host: "192.168.0.1"
-    port: "5432"
-    username: "user"
-    password: "password"
+    host: "192.168.18.10"
+    port: "5433"
+    username: "harbor_master"
+    password: "kwHF8YPEAauZkP"
     coreDatabase: "registry"
     # if using existing secret, the key must be "password"
     existingSecret: ""
@@ -854,7 +856,7 @@ redis:
     # support redis, redis+sentinel
     # addr for redis: <host_redis>:<port_redis>
     # addr for redis+sentinel: <host_sentinel1>:<port_sentinel1>,<host_sentinel2>:<port_sentinel2>,<host_sentinel3>:<port_sentinel3>
-    addr: "192.168.0.2:6379"
+    addr: "192.168.18.10:6379"
     # The name of the set of Redis instances to monitor, it must be set to support redis+sentinel
     sentinelMasterSet: ""
     # The "coreDatabaseIndex" must be "0" as the library Harbor
@@ -869,7 +871,7 @@ redis:
     # cacheLayerDatabaseIndex: "7"
     # username field can be an empty string, and it will be authenticated against the default user
     username: ""
-    password: ""
+    password: "hhLT3BmwdKH7Ek"
     # If using existingSecret, the key must be REDIS_PASSWORD
     existingSecret: ""
   ## Additional deployment annotations
