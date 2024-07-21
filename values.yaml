@@ -278,7 +278,7 @@ persistence:
       bucket: harbor-image-chart
       #accesskey: 
       #secretkey: 
-      regionendpoint: https://192.168.18.10:32771
+      regionendpoint: http://192.168.18.10:32771
       #encrypt: false
       #keyid: mykeyid
       #secure: true
